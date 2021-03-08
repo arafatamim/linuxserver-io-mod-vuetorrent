@@ -4,8 +4,7 @@ on: [push, pull_request, workflow_dispatch]
 
 env:
   ENDPOINT: "arafatamim/linuxserver-io-mod-vuetorrent"
-  BASEIMAGE: "qbittorrent"
-  MODNAME: "vuetorrent"
+  BRANCH: "main"
 
 jobs:
   build:
@@ -18,15 +17,15 @@ jobs:
           docker build --no-cache -t ${{ github.sha }} .
 
       - name: Tag image
-        if: ${{ github.ref == format('refs/heads/{0}-{1}', env.BASEIMAGE, env.MODNAME) }}
+        if: ${{ github.ref == format('refs/heads/{0}', env.BRANCH) }}
         run: |
-          docker tag ${{ github.sha }} ${ENDPOINT}:${BASEIMAGE}-${MODNAME}
-          docker tag ${{ github.sha }} ${ENDPOINT}:${BASEIMAGE}-${MODNAME}-${{ github.sha }}
-          docker tag ${{ github.sha }} ghcr.io/${ENDPOINT}:${BASEIMAGE}-${MODNAME}
-          docker tag ${{ github.sha }} ghcr.io/${ENDPOINT}:${BASEIMAGE}-${MODNAME}-${{ github.sha }}
+          docker tag ${{ github.sha }} ${ENDPOINT}:
+          docker tag ${{ github.sha }} ${ENDPOINT}:${{ github.sha }}
+          docker tag ${{ github.sha }} ghcr.io/${ENDPOINT}:
+          docker tag ${{ github.sha }} ghcr.io/${ENDPOINT}:${{ github.sha }}
 
       - name: Credential check
-        if: ${{ github.ref == format('refs/heads/{0}-{1}', env.BASEIMAGE, env.MODNAME) }}
+        if: ${{ github.ref == format('refs/heads/{0}', env.BRANCH) }}
         run: |
           echo "CR_USER=${{ secrets.CR_USER }}" >> $GITHUB_ENV
           echo "CR_PAT=${{ secrets.CR_PAT }}" >> $GITHUB_ENV
@@ -40,23 +39,23 @@ jobs:
           fi
 
       - name: Login to GitHub Container Registry
-        if: ${{ github.ref == format('refs/heads/{0}-{1}', env.BASEIMAGE, env.MODNAME) && env.CR_USER && env.CR_PAT }}
+        if: ${{ github.ref == format('refs/heads/{0}', env.BRANCH) && env.CR_USER && env.CR_PAT }}
         run: |
           echo "${{ secrets.CR_PAT }}" | docker login ghcr.io -u ${{ secrets.CR_USER }} --password-stdin
 
       - name: Push tags to GitHub Container Registry
-        if: ${{ github.ref == format('refs/heads/{0}-{1}', env.BASEIMAGE, env.MODNAME) && env.CR_USER && env.CR_PAT }}
+        if: ${{ github.ref == format('refs/heads/{0}', env.BRANCH) && env.CR_USER && env.CR_PAT }}
         run: |
-          docker push ghcr.io/${ENDPOINT}:${BASEIMAGE}-${MODNAME}-${{ github.sha }}
-          docker push ghcr.io/${ENDPOINT}:${BASEIMAGE}-${MODNAME}
+          docker push ghcr.io/${ENDPOINT}:${{ github.sha }}
+          docker push ghcr.io/${ENDPOINT}:
 
       - name: Login to DockerHub
-        if: ${{ github.ref == format('refs/heads/{0}-{1}', env.BASEIMAGE, env.MODNAME) && env.DOCKERUSER && env.DOCKERPASS }}
+        if: ${{ github.ref == format('refs/heads/{0}', env.BRANCH) && env.DOCKERUSER && env.DOCKERPASS }}
         run: |
           echo ${{ secrets.DOCKERPASS }} | docker login -u ${{ secrets.DOCKERUSER }} --password-stdin
 
       - name: Push tags to DockerHub
-        if: ${{ github.ref == format('refs/heads/{0}-{1}', env.BASEIMAGE, env.MODNAME) && env.DOCKERUSER && env.DOCKERPASS }}
+        if: ${{ github.ref == format('refs/heads/{0}', env.BRANCH) && env.DOCKERUSER && env.DOCKERPASS }}
         run: |
-          docker push ${ENDPOINT}:${BASEIMAGE}-${MODNAME}-${{ github.sha }}
-          docker push ${ENDPOINT}:${BASEIMAGE}-${MODNAME}
+          docker push ${ENDPOINT}:${{ github.sha }}
+          docker push ${ENDPOINT}:
