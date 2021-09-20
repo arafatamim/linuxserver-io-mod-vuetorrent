@@ -2,7 +2,7 @@
 [VueTorrent](https://github.com/WDaan/VueTorrent) theme mod for LinuxServer.io's qBittorrent container
 
 ## Usage
-Add an environment variable called `DOCKER_MODS` with the value `arafatamim/linuxserver-io-mod-vuetorrent` when creating the container.
+1. Add an environment variable called `DOCKER_MODS` with the value `arafatamim/linuxserver-io-mod-vuetorrent` when creating the container.
 
 Example: `docker-compose.yml`
 ```yml
@@ -25,6 +25,8 @@ qbittorrent:
     - 9090:9090
   restart: unless-stopped
 ```
+2. Go to Settings -> WEBUI, check `Use alternative Web UI` and enter its location `/vuetorrent`, then save.
+<img src="https://user-images.githubusercontent.com/31634638/128675722-7abbc91f-4b2e-4d67-a356-9693b51754e0.png" />
 
 ## Sources
 - [VueTorrent repo](https://github.com/WDaan/VueTorrent)
