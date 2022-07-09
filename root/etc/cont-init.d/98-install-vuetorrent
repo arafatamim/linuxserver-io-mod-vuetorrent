@@ -7,24 +7,46 @@ Source: https://github.com/WDaan/VueTorrent
 ---
 EOF
 
-LATEST_RELEASE=$(curl -s -L https://api.github.com/repos/wdaan/vuetorrent/releases/latest \
-              | grep "browser_download_url.*zip" \
-              | cut -d : -f 2,3 \
-              | tr -d \" \
-              | xargs) # to trim whitespace
+RESPONSE=$(curl -s -L https://api.github.com/repos/wdaan/vuetorrent/releases/latest)
 
-if [ ! -d /vuetorrent ]; then
-  echo "Running installer..."
+TAG=$(echo "$RESPONSE" \
+  | grep tag_name \
+  | cut -d : -f 2,3 \
+  | tr -d \", \
+  | xargs)
 
-  curl -O -J -L $LATEST_RELEASE && \
-  unzip vuetorrent.zip -d /
+LATEST_RELEASE=$(echo "$RESPONSE" \
+  | grep "browser_download_url.*zip" \
+  | cut -d : -f 2,3 \
+  | tr -d \" \
+  | xargs) # to trim whitespace
 
-  # Remove zip after unpacking
-  rm /vuetorrent.zip
+CURRENT=/current_version.txt
 
-  echo "Done! The theme is installed in the root folder. Apply it from WEBUI settings."
-else
-  echo "VueTorrent theme is already installed. Exiting..."
+DIR=/vuetorrent
+
+if [ -e "$CURRENT" ]; then
+  echo "$CURRENT exists"
+
+  if [[ `cat $CURRENT` == $TAG ]]; then
+    echo "Latest version installed: $TAG. Exiting."
+    exit
+  fi
 fi
 
+if [ -d "$DIR" ]; then
+  echo "Removing $DIR"
+  rm -rf "$DIR"
+fi
 
+echo "Running installer..."
+
+curl -O -J -L $LATEST_RELEASE && \
+unzip vuetorrent.zip -d /
+
+# Remove zip after unpacking
+rm /vuetorrent.zip
+
+echo $TAG > $CURRENT
+
+echo "Done! The theme is installed in the root folder. Apply it from WEBUI settings."
