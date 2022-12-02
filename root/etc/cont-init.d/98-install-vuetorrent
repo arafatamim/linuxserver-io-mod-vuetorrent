@@ -41,11 +41,11 @@ fi
 
 echo "Running installer..."
 
-curl -O -J -L $LATEST_RELEASE && \
+curl --silent -O -J -L $LATEST_RELEASE && \
 unzip vuetorrent.zip -d /
 
 # Remove zip after unpacking
-rm /vuetorrent.zip
+rm vuetorrent.zip
 
 echo $TAG > $CURRENT
 
