@@ -1,6 +1,9 @@
 # linuxserver-io-mod-vuetorrent
 [VueTorrent](https://github.com/WDaan/VueTorrent) theme mod for LinuxServer.io's qBittorrent container
 
+## Similar projects
+- [gabe565/linuxserver-mod-vuetorrent](https://github.com/gabe565/linuxserver-mod-vuetorrent)
+
 ## Usage
 1. Add an environment variable called `DOCKER_MODS` with the value `arafatamim/linuxserver-io-mod-vuetorrent` when creating the container.
 
