@@ -25,27 +25,34 @@ CURRENT=/current_version.txt
 
 DIR=/vuetorrent
 
-if [ -e "$CURRENT" ]; then
+ZIP=vuetorrent.zip
+
+if [ -e $CURRENT ]; then
   echo "$CURRENT exists"
 
-  if [[ `cat $CURRENT` == $TAG ]]; then
+  if [ `cat $CURRENT` == $TAG ] && [ -d $DIR ]; then
     echo "Latest version installed: $TAG. Exiting."
     exit
   fi
 fi
 
-if [ -d "$DIR" ]; then
-  echo "Removing $DIR"
-  rm -rf "$DIR"
-fi
-
 echo "Running installer..."
 
-curl --silent -O -J -L $LATEST_RELEASE && \
-unzip vuetorrent.zip -d /
+HTTP_CODE=$(curl --silent -O -J -L $LATEST_RELEASE --write-out "%{http_code}" "$@")
 
-# Remove zip after unpacking
-rm vuetorrent.zip
+if [ $HTTP_CODE == 404 ]; then
+  echo "Error downloading zip: $LATEST_RELEASE. Exiting."
+  exit
+fi
+
+if [ -d $DIR ] && [ -d $ZIP ]; then
+  echo "Removing $DIR"
+  rm -rf $DIR
+fi
+
+unzip $ZIP -d /
+
+rm $ZIP
 
 echo $TAG > $CURRENT
 
