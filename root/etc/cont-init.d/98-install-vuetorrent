@@ -45,7 +45,7 @@ if [ $HTTP_CODE == 404 ]; then
   exit
 fi
 
-if [ -d $DIR ] && [ -d $ZIP ]; then
+if [ -d $DIR ] && [ -f $ZIP ]; then
   echo "Removing $DIR"
   rm -rf $DIR
 fi
