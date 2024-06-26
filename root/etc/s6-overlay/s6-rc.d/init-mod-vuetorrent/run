@@ -3,11 +3,11 @@
 cat <<EOF
 ---
 VueTorrent Theme Installer
-Source: https://github.com/WDaan/VueTorrent
+Source: https://github.com/VueTorrent/VueTorrent
 ---
 EOF
 
-RESPONSE=$(curl -s -L https://api.github.com/repos/wdaan/vuetorrent/releases/latest)
+RESPONSE=$(curl -s -L https://api.github.com/repos/vuetorrent/vuetorrent/releases/latest)
 
 TAG=$(echo "$RESPONSE" \
   | grep tag_name \
